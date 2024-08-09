@@ -17,6 +17,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { signUpSchema, SignUpSchemaType } from "@/schema/auth/sign-up-schema";
+import { signUpAction } from "@/actions/auth/sign-up-action";
+import { toast } from "sonner";
 
 type Props = {};
 
@@ -37,6 +39,27 @@ function SignUpForm({}: Props) {
   async function onSubmit(values: SignUpSchemaType) {
     await new Promise((resolve) => setTimeout(resolve, 2000));
     console.log(values);
+
+    const response = await signUpAction(values);
+    if (response.success) {
+      toast.success("Account created successfully");
+      router.push("/sign-in");
+    } else {
+      switch (response.statusCode) {
+        case 400:
+          toast.error("Invalid input");
+          break;
+        case 409:
+          toast.error("Email already exists");
+          break;
+        case 500:
+          toast.error("An unexpected error occurred");
+          break;
+        default:
+          toast.error("An unexpected error occurred");
+          break;
+      }
+    }
   }
   return (
     <Form {...form}>

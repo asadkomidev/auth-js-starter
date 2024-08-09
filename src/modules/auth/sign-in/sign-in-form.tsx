@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { signInSchema, SignInSchemaType } from "@/schema/auth/sign-in-schema";
 import { Loader2 } from "lucide-react";
+import { signInAction } from "@/actions/auth/sign-in-action";
+import { toast } from "sonner";
 
 type Props = {};
 
@@ -34,6 +36,24 @@ function SignInForm({}: Props) {
   async function onSubmit(values: SignInSchemaType) {
     await new Promise((resolve) => setTimeout(resolve, 2000));
     console.log(values);
+
+    const response = await signInAction(values);
+    if (response.success) {
+      toast.success("Signed in successfully");
+      router.push("/");
+    } else {
+      switch (response.statusCode) {
+        case 401:
+          toast.error("Invalid email or password");
+          break;
+        case 500:
+          toast.error("Internal server error");
+          break;
+        default:
+          toast.error("An unexpected error occurred");
+          break;
+      }
+    }
   }
   return (
     <Form {...form}>
