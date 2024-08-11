@@ -24,7 +24,8 @@
         "./src/components/*",
         "./*",
         "./src/app/*",
-        "./src/styles/*"
+        "./src/styles/*",
+        "./backend/*"
       ]
     }
   },

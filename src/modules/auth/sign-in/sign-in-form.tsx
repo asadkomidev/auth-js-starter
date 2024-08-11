@@ -18,6 +18,7 @@ import { signInSchema, SignInSchemaType } from "@/schema/auth/sign-in-schema";
 import { Loader2 } from "lucide-react";
 import { signInAction } from "@/actions/auth/sign-in-action";
 import { toast } from "sonner";
+import ForgotPasswordButton from "../forgot-password/forgot-password-button";
 
 type Props = {};
 
@@ -31,26 +32,21 @@ function SignInForm({}: Props) {
     },
   });
 
-  const { formState } = form;
+  const { formState, setError } = form;
 
   async function onSubmit(values: SignInSchemaType) {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log(values);
-
     const response = await signInAction(values);
     if (response.success) {
       toast.success("Signed in successfully");
-      router.push("/");
+      window.location.href = "/";
     } else {
       switch (response.statusCode) {
         case 401:
-          toast.error("Invalid email or password");
+          toast.error(response.error);
           break;
         case 500:
-          toast.error("Internal server error");
-          break;
         default:
-          toast.error("An unexpected error occurred");
+          toast.error("Internal Server Error");
           break;
       }
     }
@@ -59,7 +55,8 @@ function SignInForm({}: Props) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="mt-8 w-full space-y-8"
+        className="mt-4 w-full space-y-8"
+        id="sign-in-form"
       >
         <div className="space-y-4">
           <FormField
@@ -100,6 +97,7 @@ function SignInForm({}: Props) {
         </div>
         <div className="">
           <Button
+            form="sign-in-form"
             type="submit"
             className="w-full"
             disabled={formState.isSubmitting}

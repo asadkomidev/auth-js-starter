@@ -37,9 +37,6 @@ function SignUpForm({}: Props) {
   const { formState } = form;
 
   async function onSubmit(values: SignUpSchemaType) {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log(values);
-
     const response = await signUpAction(values);
     if (response.success) {
       toast.success("Account created successfully");
